@@ -1,0 +1,18 @@
+services:
+  db:
+    image: postgres:15.8-alpine3.20
+    ports:
+      - ${POSTGRES_PORTS}
+    environment:
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+
+  pgadmin:
+    image: dpage/pgadmin4:8.11.0
+    ports:
+      - ${PGADMIN_PORTS}
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_DEFAULT_PASSWORD}
+    depends_on:
+      - db
