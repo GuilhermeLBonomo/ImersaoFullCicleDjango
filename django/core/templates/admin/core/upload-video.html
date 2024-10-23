@@ -5,38 +5,37 @@
 {% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static "admin/css/forms.css" %}">{% endblock %}
 
 {% block breadcrumbs %}
-<div class="breadcrumbs">
-<a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
-&rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
-&rsaquo; {% if has_view_permission %}<a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>{% else %}{{ opts.verbose_name_plural|capfirst }}{% endif %}
-&rsaquo; {% blocktranslate with name=opts.verbose_name %}Upload vídeo{% endblocktranslate %}{{ original|truncatewords:"18" }}
-</div>
+    <div class="breadcrumbs">
+        <a href="{% url 'admin:index' %}">{% translate 'Home' %}</a>
+        &rsaquo; <a href="{% url 'admin:app_list' app_label=opts.app_label %}">{{ opts.app_config.verbose_name }}</a>
+        &rsaquo; {% if has_view_permission %}<a href="{% url opts|admin_urlname:'changelist' %}">{{ opts.verbose_name_plural|capfirst }}</a>{% else %}{{ opts.verbose_name_plural|capfirst }}{% endif %}
+        &rsaquo; {% blocktranslate with name=opts.verbose_name %}Upload vídeo{% endblocktranslate %}{{ original|truncatewords:"18" }}
+    </div>
 {% endblock %}
 
 {% block content %}
-<form id="upload-form" method="post" enctype="multipart/form-data">
-    <p id="errornote" class="errornote hidden"></p>
-    {% csrf_token %}
-    <div class="form-row">
-        <strong>Título:</strong> {{ video.title }}
-        <br/>
-        <strong>Status do vídeo:</strong> {{ video.get_video_status_display }}
-        
-    </div>
-    <div class="form-row">
-        <input type="file" name="video" accept="video/mp4"/>
-    </div>
-    <div class="submit-row">
-        <input type="submit" value="Fazer upload" class="default" name="btnUploadVideo" id="btnUploadVideo"/>
-    </div>
-</form>
+    <form id="upload-form" method="post" enctype="multipart/form-data">
+        <p id="errornote" class="errornote hidden"></p>
+        {% csrf_token %}
+        <div class="form-row">
+            <strong>Título:</strong> {{ video.title }}
+            <br/>
+            <strong>Status do vídeo:</strong> {{ video.get_video_status_display }}
+        </div>
+        <div class="form-row">
+            <input type="file" name="video" accept="video/mp4"/>
+        </div>
+        <div class="submit-row">
+            <input type="submit" value="Fazer upload" class="default" name="btnUploadVideo" id="btnUploadVideo"/>
+        </div>
+    </form>
 
-<div id="progress-bar" style="width: 100%; background: #f3f3f3;">
-    <div id="progress" style="width: 0%; height: 20px; background: #4caf50; text-align: center;">0%</div>
-</div>
+    <div id="progress-bar" style="width: 100%; background: #f3f3f3;">
+        <div id="progress" style="width: 0%; height: 20px; background: #4caf50; text-align: center;">0%</div>
+    </div>
 
 <script type="text/javascript">
-    const CHUNK_SIZE = 1 * 1024 * 1024;
+    const CHUNK_SIZE = 1 * 1024 * 1024; // 1MB para cada Chunk
     const MAX_SIMULTANEOUS_UPLOADS = 2; 
 
     document.getElementById('upload-form').addEventListener('submit', handleFormSubmit);
@@ -86,7 +85,7 @@
         for (let currentChunk = 0; currentChunk < totalChunks; currentChunk++) {
             const start = currentChunk * CHUNK_SIZE;
             const end = Math.min(start + CHUNK_SIZE, file.size);
-            const chunk = file.slice(start, end);
+            const chunk = file.slice(start, end); // 0 - 1 | 1 - 2 | 2 - 3 ...
 
             const formData = new FormData();
             formData.append('csrfmiddlewaretoken', document.querySelector('input[name="csrfmiddlewaretoken"]').value);
@@ -162,6 +161,7 @@
     }
 
     function displayError(message) {
+        console.error(message);
         const errorNoteElement = document.getElementById('errornote');
         errorNoteElement.classList.remove('hidden');
         errorNoteElement.innerText = message;
