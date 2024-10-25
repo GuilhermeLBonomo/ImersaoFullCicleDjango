@@ -168,5 +168,6 @@ db.sqlite3
 .history/
 __pycache__/
 thumbnails
+tumbnails
 .vscode
 .env

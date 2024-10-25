@@ -6,8 +6,9 @@ name = "pypi"
 [packages]
 django = "5.1.1"
 python-dotenv = "1.0.1"
-pillow = "10.4.0"
+pillow = "*"
 psycopg2-binary = "2.9.9"
+docker = "*"
 
 [dev-packages]
 

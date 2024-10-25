@@ -2,12 +2,20 @@ import traceback
 from typing import Any
 from django.contrib import admin, messages
 from django.contrib.auth.admin import csrf_protect_m
-from core.models import Video, Tag
 from django.http import HttpRequest, JsonResponse
 from django.shortcuts import render
-from django.urls import path
+from django.urls import path, reverse
 from django.utils.html import format_html
+from core.form import VideoChunkFinishUploadForm, VideoChunkUploadForm
+from core.models import Video, Tag
+from core.services import VideoChunkUploadException, VideoMediaInvalidStatusException, VideoMediaNotExistsException, create_video_service_factory
 
+# class VideoMediaInline(admin.StackedInline):
+#     model = VideoMedia
+#     verbose_name = 'Mídia'
+#     max_num = 1
+#     min_num = 1
+#     can_delete = False
 
 class VideoAdmin(admin.ModelAdmin):
     list_display = ('title', 'published_at', 'is_published', 'num_likes', 'num_views', 'redirect_to_upload', )
@@ -114,8 +122,7 @@ class VideoAdmin(admin.ModelAdmin):
 
         return JsonResponse({}, status=204)
 
-
 # Register your models here.
-
-admin.site.register(Video)
+admin.site.register(Video, VideoAdmin)
 admin.site.register(Tag)
+#admin.site.register(VideoMedia)
